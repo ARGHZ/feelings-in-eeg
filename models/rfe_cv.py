@@ -1,10 +1,9 @@
-from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 print(__doc__)
 
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
 

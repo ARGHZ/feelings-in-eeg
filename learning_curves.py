@@ -1,6 +1,6 @@
 import sys
 
-from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 WORKING_DIR = "/"
 
@@ -10,15 +10,12 @@ sys.path.extend(['C:\\Users\\Juan\\PycharmProjects\\feelings-in-eeg', WORKING_DI
 
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.naive_bayes import GaussianNB
-from sklearn.svm import SVC
-from sklearn.datasets import load_digits
 from sklearn.model_selection import learning_curve
-from sklearn.model_selection import ShuffleSplit, StratifiedKFold
+from sklearn.model_selection import StratifiedKFold
 from config import WORKING_DIR
 import head_it.config as head_it_config
 from featuresextractor import get_csv_content
-from models.classification import binarize_targets
+from classification import binarize_targets
 
 
 def plot_learning_curve(estimator, title, X, y, axes=None, ylim=None, cv=None,

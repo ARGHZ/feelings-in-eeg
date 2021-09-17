@@ -12,11 +12,9 @@ from time import time
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.linear_model import SGDClassifier
 from sklearn.neural_network import MLPClassifier
-from featuresextractor import build_and_save_features, get_csv_content
+from featuresextractor import get_csv_content
 import head_it.config as head_it_config
 from classification import binarize_targets, zero_center, whiten
-from sklearn import preprocessing
-
 
 CLFS = {'sgd': SGDClassifier(loss='hinge', penalty='elasticnet', fit_intercept=True, max_iter=5000),
         'mlp': MLPClassifier(activation='logistic', solver='sgd', max_iter=5000)}

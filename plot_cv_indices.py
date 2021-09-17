@@ -21,11 +21,9 @@ sys.path.extend(['C:\\Users\\Juan\\PycharmProjects\\feelings-in-eeg', WORKING_DI
 from config import WORKING_DIR
 import head_it.config as head_it_config
 from featuresextractor import get_csv_content
-from models.classification import binarize_targets
+from classification import binarize_targets
 
-from sklearn.model_selection import (TimeSeriesSplit, KFold, ShuffleSplit,
-                                     StratifiedKFold, GroupShuffleSplit,
-                                     GroupKFold, StratifiedShuffleSplit)
+from sklearn.model_selection import (KFold, StratifiedKFold, StratifiedShuffleSplit)
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch

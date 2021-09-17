@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.svm import SVC
-from featuresextractor import build_and_save_features, get_csv_content
+from featuresextractor import get_csv_content
 import head_it.config as head_it_config
 import numpy as np
 from classification import binarize_targets
