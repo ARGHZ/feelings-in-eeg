@@ -50,7 +50,7 @@ CHANNELS_PER_SUBJECT = {'1': ['H17', 'H11', 'B21', 'B27', 'A31', 'E32'],
                         '35': ['H17', 'H11', 'B15', 'B19', 'A28', 'D27'],}
 
 # let's explore some frequency bands
-FREQ_BANDS = [('Delta', 1, 3), ('Theta', 4, 7), ('Alpha', 8, 12), ('Beta', 13, 30), ('Gamma', 31, 128)]
+FREQ_BANDS = [('Delta', 1, 3), ('Theta', 4, 7), ('Alpha', 8, 12), ('Beta', 13, 30), ('Gamma', 31, 50)]
 
 COMMON_CHANNELS = ['A4', 'A10', 'B3', 'B6', 'B8', 'B11', 'B12', 'B18', 'B24', 'B29', 'C9', 'C14', 'C20', 'D3', 'D31',
                    'F6', 'F7', 'F8', 'F16', 'F17', 'F26', 'H3', 'H5', 'H10']
