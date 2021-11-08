@@ -1,5 +1,6 @@
-from os import listdir
+from os import listdir, getenv
 from os.path import isfile, join
+from dotenv import load_dotenv
 
 import pandas as pd
 import seaborn as sns
@@ -135,7 +136,8 @@ def plot_all(P, name, P_significance=np.array([]), display_as_grid=True, limits=
 if __name__ == '__main__':
     general_config.extend_sys_path_with_current_dir()
 
-    emotion_files_path = head_it_config.PDCS_DIRS
+    load_dotenv()
+    emotion_files_path = getenv('PDCS_DIRS')
     files_path = listdir(emotion_files_path)
     pdc_all, pdc_significance = [], []
     for path in files_path:

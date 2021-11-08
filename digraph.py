@@ -1,5 +1,6 @@
-from os import listdir
+from os import listdir, getenv
 from os.path import join, isfile
+from dotenv import load_dotenv
 
 import json
 import config as general_config
@@ -74,7 +75,8 @@ def serialize_and_save_graph(graph, full_path_file):
 if __name__ == '__main__':
     general_config.extend_sys_path_with_current_dir()
 
-    emotion_files_path = head_it_config.PDCS_DIRS
+    load_dotenv()
+    emotion_files_path = getenv('PDCS_DIRS')
     files_path = listdir(emotion_files_path)
     pdc_all, pdc_significance, graph_metrics_all = [], [], []
     for path in files_path:

@@ -1,4 +1,6 @@
 # coding=utf-8
+import os
+from dotenv import load_dotenv
 import pandas as pd
 import numpy as np
 from os import listdir
@@ -16,7 +18,8 @@ import networkx as nx
 
 
 if __name__ == '__main__':
-    emotion_files_path = head_it_config.PDCS_DIRS
+    load_dotenv()
+    emotion_files_path = os.getenv('PDCS_DIRS')
     files_path = listdir(emotion_files_path)
     pdc_significance_all, pdc_significance = np.array([]), []
 
