@@ -12,6 +12,7 @@ import json
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+plt.style.use('seaborn')
 import seaborn as sns
 from scipy import stats
 from sklearn.ensemble import RandomForestClassifier
@@ -95,12 +96,57 @@ def test_density_significance():
     return densities_with_pvalues
 
 
+def plot_eeg_epoch():
+    freq_sampling = 256
+
+    full_path_file = 'C:/Users/Juan/OneDrive - CINVESTAV/head_it/epochs/subj_1_anger_raw_try-1.csv'
+    data_epoch = pd.read_csv(full_path_file)
+    data_epoch.index = np.linspace(0, data_epoch.shape[0] / freq_sampling, data_epoch.shape[0]) - 1
+    data_eeg = data_epoch[data_epoch.columns[3:]]
+
+    duration = 2.5
+    init_limit = int(freq_sampling)
+    end_limit = int((freq_sampling * duration) + init_limit)
+
+    data = data_epoch.to_numpy()[init_limit:end_limit, 3:]
+
+    cmap = plt.get_cmap('Dark2')
+    colors = [cmap(i) for i in np.linspace(0, 1, data_eeg.columns.shape[0])]
+    fig, ax = plt.subplots(nrows=data_eeg.columns.shape[0], ncols=1, sharex=True, sharey=True, figsize=(19, 9))
+    for ith, ch_name in enumerate(data_eeg.columns):
+        ax[ith].plot(data_eeg[ch_name], label=ch_name, color=colors[ith])
+        ax[ith].set_xlim((0, 2.5))
+        ax[ith].legend(loc='upper left')
+    fig.text(0.5, 0.04, 'segundos', ha='center', fontsize=17)
+    fig.text(0.04, 0.5, '$\mu$Voltios', va='center', rotation='vertical', fontsize=17)
+    plt.show()
+
+
 if __name__ == '__main__':
+    sns.set(font_scale=2.0)
     densities = test_density_significance()
 
     # sns.lineplot(data=densities_with_pvalues['p_value'])
     chart = sns.lineplot(data=densities, x='threshold', y='p_value')
+    chart.set(xlabel='PDC umbral', ylabel='valor p')
     chart.axhline(0.05, ls='--', c='red')
-    # plt.show()
+    # plt.show()'''
+    CLS_VARS = "C:/Users/Juan/OneDrive - CINVESTAV/head_it"
+    '''data = []
+    for freq_band in general_config.FREQ_BANDS:
+        freq_name, freq_range = freq_band[0].lower(), freq_band[1:]
+
+        file_path, emotions = CLS_VARS + '/classification_results/binary_classification_metrics_' + freq_name + '_mayor_igual_que_25.csv', head_it_config.EMOTIONAL_LABELS
+        results = pd.read_csv(file_path).dropna().query("clf in ('randomforest-5') & test_f1_micro >= 0.6116")
+
+        results['freq_band'] = freq_name
+        data.append(results)
+    data = pd.concat(data)
+    data['emotions_pair'] = data['emotion_a'] + '-' + data['emotion_b']
+    data.sort_values(by='test_accuracy', ascending=False, inplace=True)
+
+    data_grouped = data[['emotions_pair', 'test_f1_micro', 'freq_band']].groupby('emotions_pair')
+
+    plot_eeg_epoch()'''
 
     print('End of main process')

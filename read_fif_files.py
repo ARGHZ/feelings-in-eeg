@@ -12,7 +12,7 @@ from filters import baseline_als_optimized, butter_bandpass_filter
 
 if __name__ == '__main__':
 
-    emotion_files_path = project_config.DATA_DIR + '/head_it'
+    emotion_files_path = project_config.DATA_DIR + '/fif_files'
     files_path = listdir(emotion_files_path)
     fig_file_path_base = project_config.DATA_DIR + '/psd'
 
@@ -21,12 +21,13 @@ if __name__ == '__main__':
 
         file_match = raw_fif_path_file.find('_raw.fif')
         if file_match >= 0 and isfile(raw_fif_path_file):
-            raw_fif_file_name = raw_fif_path_file.split('\\')[1].split('.')[0]
+            raw_fif_file_name = raw_fif_path_file.split('\\')
+            raw_fif_file_name = raw_fif_file_name[len(raw_fif_file_name) - 1].split('.')[0]
             raw_fif_file_name_array = raw_fif_file_name.split('_')
             i, emotion_label = raw_fif_file_name_array[1], raw_fif_file_name_array[2]
 
-            fname = project_config.DATA_DIR + '/head_it/subj_' + str(i) + '_' + emotion_label + '_raw.fif'
-            annot_file_path = project_config.DATA_DIR + '/head_it/' + raw_fif_file_name.replace('_raw', '-annot') + \
+            fname = project_config.DATA_DIR + '/fif_files/subj_' + str(i) + '_' + emotion_label + '_raw.fif'
+            annot_file_path = project_config.DATA_DIR + '/fif_files/' + raw_fif_file_name.replace('_raw', '-annot') + \
                               '.fif'
             title = raw_fif_file_name
 
@@ -46,15 +47,15 @@ if __name__ == '__main__':
                 # raw_file = raw_file.pick_channels(ch_names=['H11', 'H17', 'B27', 'B21', 'A31', 'E32'])
                 subject_channels = project_config.CHANNELS_PER_SUBJECT[str(i)]
                 raw_file = raw_file.pick_channels(ch_names=subject_channels)
-                figure = raw_file.plot(title=title, show=False, block=False, show_options=True,
-                                       show_first_samp=True)
+                '''figure = raw_file.plot(title=title, show=False, block=False, show_options=True,
+                                       show_first_samp=True)'''
                 '''raw_file.plot_psd(fmin=0.1, fmax=100)'''
 
                 # notch filter due to power line
                 freqs = (60, )
                 raw_file = raw_file.copy().notch_filter(freqs=freqs)
-                raw_file.plot(title=title, show=False, block=False, show_options=True,
-                              show_first_samp=True)
+                '''raw_file.plot(title=title, show=False, block=False, show_options=True,
+                              show_first_samp=True)'''
                 '''raw_file.plot_psd(fmin=0.1, fmax=100)'''
 
                 # bandpass filter
@@ -62,8 +63,8 @@ if __name__ == '__main__':
                 '''iir_params = dict(order=5, ftype='butter', output='ba')
                 raw_file = raw_file.copy().filter(0.1, 100.0, iir_params=iir_params, method='iir', n_jobs=1,
                                                   l_trans_bandwidth=1, h_trans_bandwidth=1)'''
-                figure = raw_file.plot(show=False, block=False, show_options=True,
-                                       show_first_samp=True)
+                '''figure = raw_file.plot(show=False, block=False, show_options=True,
+                                      show_first_samp=True)'''
                 '''raw_file.plot_psd()'''
 
                 '''title_filtered = 'Butterworth 5 orden de [0.1, 100] Hz'
@@ -79,7 +80,7 @@ if __name__ == '__main__':
                 figure.savefig(project_config.DATA_DIR + '/emotions/' + emotion_label + '_subj_' + str(i) + '.png')"""
                 tmin, tmax = -1., 3.99  # inclusive tmax
                 event_id = {'press': 0, 'press1': 1, }
-                exit()
+
                 try:
                     events_from_annot, event_dict = events_from_annotations(raw_file, event_id)
                     events_from_annot[:, 0] = events_from_annot[:, 0] - raw_file.first_samp
@@ -88,7 +89,7 @@ if __name__ == '__main__':
                     print('====> Eventos no enciontrados en  => {}'.format(title))
                 else:
                     picks = pick_types(raw_file.info, meg=False, eeg=True, stim=False, eog=False, exclude='bads')
-
+                    plt.close()
                     epochs = Epochs(raw_file, events_from_annot, event_dict, tmin=tmin, tmax=tmax, picks=picks,
                                     baseline=None, preload=True)
 
@@ -96,20 +97,10 @@ if __name__ == '__main__':
                     for ith in range(n_epochs):
                         plt.figure(figsize=(25, 14))
                         ax = plt.axes()
-                        epoch_psd_figure = epochs[ith].plot_psd(fmin=0.5, fmax=100, ax=ax, show=False)
+                        # epoch_psd_figure = epochs[ith].plot_psd(fmin=0.5, fmax=100, ax=ax, show=False)
+                        epochs[ith].plot(show=True, show_scrollbars=True)
                         ax.set_title('file: {} | try: {}'.format(title, str(ith + 1)))
                         fig_file_path = fig_file_path_base + '/' + raw_fif_file_name + '_try-' + str(ith + 1) + '.png'
                         # epoch_psd_figure.savefig(fig_file_path)
-                        # exit()
-                        plt.close()
-
-                        dt = epochs[ith].to_data_frame()
-
-                        csv_file_path = project_config.DATA_DIR + '/epochs/' + title + '_try-' + str(ith + 1) + '.csv'
-                        epoch_fig_file_path = project_config.DATA_DIR + '/emotions/' + title + '_try-' + str(ith + 1) \
-                                              + '.png'
-                        # dt.to_csv(csv_file_path, index=False)
-                        figure = epochs[ith].plot(title=fname, show=False, block=False)
-                        figure.savefig(epoch_fig_file_path)
-                        # exit()
-                        plt.close()
+                        # plt.show()
+                        1/0

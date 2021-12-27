@@ -80,10 +80,11 @@ def get_heatmap(pdc_matrix, save_img=False, img_file_name=None, heat_map_options
                 new_pdc[i, j] = mean_value
 
     if save_img:
+        sns.set(font_scale=2.2)
         sns.heatmap(new_pdc, annot=True, cmap='coolwarm', **heat_map_options)
         plt.show()
         epoch_fig_file_path = general_config.DATA_DIR + '/pdc/' + img_file_name + '.png'
-        plt.savefig(epoch_fig_file_path, dpi=100)
+        # plt.savefig(epoch_fig_file_path, dpi=100)
     return new_pdc
 
 
@@ -98,7 +99,10 @@ def plot_all(P, name, P_significance=np.array([]), display_as_grid=True, limits=
     fill_limit = np.arange(1, 128 + 1)
 
     if display_as_grid:
-        f, axes = plt.subplots(N, N)
+        # f, axes = plt.subplots(N, N)
+        fig, axes = plt.subplots(nrows=N, ncols=N, sharex=True, sharey=True, figsize=(19, 9))
+        fig.text(0.5, 0.04, 'Frecuencia en Hz', ha='center', fontsize=17)
+        fig.text(0.04, 0.5, 'PDC', va='center', rotation='vertical', fontsize=17)
         for i in range(N):
             for j in range(N):
                 current_pdc = P[i, j, :].flatten()
@@ -106,10 +110,9 @@ def plot_all(P, name, P_significance=np.array([]), display_as_grid=True, limits=
                 # axes[i, j].fill_between(fill_limit, current_pdc, 0)
                 axes[i, j].fill_between(fill_limit, significance_pdc, 0, facecolor='red')
                 # axes[i, j].plot(significance_pdc, '-+r')
-                # axes[i, j].set_xlim([limits['start'], limits['stop']])
+                axes[i, j].set_xlim([0, 129])
                 axes[i, j].set_ylim([0, 1])
-        plt.title(name)
-        plt.tight_layout()
+        # plt.tight_layout()
     else:
         # iterating over ith rows
         for i in range(N):
@@ -123,9 +126,11 @@ def plot_all(P, name, P_significance=np.array([]), display_as_grid=True, limits=
                 plt.figure()
                 plt.title(title)
                 # plt.fill_between(freqs, current_pdc, 0)
-                plt.fill_between(fill_limit, current_pdc, 0)
-                plt.plot(significance_pdc, 'or')
-                # plt.xlim([limits['start'], limits['stop']])
+                plt.fill_between(fill_limit, significance_pdc, 0, facecolor='red')
+                # plt.plot(significance_pdc, 'or')
+                plt.xlim([0, 129])
+                ax = plt.gca()
+                ax.axes.xaxis.set_visible(False)
                 plt.ylim([0, 1])
                 plt.show()
     if save_img:
@@ -145,7 +150,7 @@ if __name__ == '__main__':
         file_emotion_match = raw_path_item.find('anger_') >= 0
         file_subject_match = raw_path_item.find('subj_1_') >= 0
 
-        if True and True and isfile(raw_path_item):
+        if file_emotion_match and file_subject_match and isfile(raw_path_item):
             # Getting CSV file as numpy array
             try:
                 matlab_vars = read_mat_file(raw_path_item)
@@ -170,11 +175,10 @@ if __name__ == '__main__':
                                                                 'xticklabels': ch_names, 'yticklabels': ch_names
                                                             })
 
-                    plt.close()
-                    img_file_name = img_file_name.split('/')[1]
+                    '''img_file_name = img_file_name.split('/')[1]
                     plot_all(matlab_vars['c']['pdc'][0, 0], path.upper(), matlab_vars['c']['pdc_th'][0, 0],
-                             display_as_grid=True, save_img=False, img_file_name=img_file_name)
-                    exit()
+                             display_as_grid=True, save_img=False, img_file_name=img_file_name)'''
+                    plt.show()
                     '''plt.close()'''
                     print(raw_path_item)
 

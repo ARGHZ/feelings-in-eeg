@@ -3,9 +3,9 @@ import sys
 import numpy as np
 import pandas as pd
 
-WORKING_DIR = "/"
+CLS_VARS = "C:/Users/Juan/OneDrive - CINVESTAV/head_it"
 
-sys.path.extend(['C:\\Users\\Juan\\PycharmProjects\\feelings-in-eeg', WORKING_DIR])
+sys.path.extend(['C:\\Users\\Juan\\PycharmProjects\\feelings-in-eeg', CLS_VARS])
 
 from sklearn import svm
 from sklearn.dummy import DummyClassifier
@@ -110,7 +110,7 @@ if __name__ == '__main__':
                               ('frustration', 'content'), ('fear', 'excite'),
                               ('sad', 'happy'), ('grief', 'joy'))
     '''
-    file_path, emotions = WORKING_DIR + '/data/graph_metrics_mayor_igual_que_25_all.csv', head_it_config.EMOTIONAL_LABELS
+    file_path, emotions = CLS_VARS + '/graph_metrics_mayor_igual_que_25_all.csv', head_it_config.EMOTIONAL_LABELS
     opposite_pair_emotions = combinations(emotions, 2)
     all_experiment_metrics = []
     print("\n---------------------> CONSIDERING ALL FREQUENCY BAND FEATURES")
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         print('____________{} vs {}__________'.format(emotion_1, emotion_2))
 
         data = get_csv_content(file_path).dropna().query('emotion in ("' + emotion_1 + '", "' + emotion_2 +
-                                                         '") & freq_band == "gamma"')
+                                                         '")')
         data = data[head_it_config.CLASSIFICATION_VARS]
         y, X = np.array([emotions.index(value) for ith, value in data[head_it_config.CLASSIFICATION_VARS[0]].items()]), \
                data[head_it_config.CLASSIFICATION_VARS[1:]]
@@ -135,5 +135,5 @@ if __name__ == '__main__':
         all_experiment_metrics.append(experiment_metrics)
         print('____________done__________\n'.format(emotion_1, emotion_2))
     all_experiment_metrics = pd.concat(all_experiment_metrics)
-    all_experiment_metrics.to_csv(WORKING_DIR + '/data/binary_classification_metrics.csv', index=False)
+    all_experiment_metrics.to_csv('/data/binary_classification_metrics.csv', index=False)
     print('end of main process')

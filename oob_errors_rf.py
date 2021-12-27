@@ -26,7 +26,7 @@ print(__doc__)
 
 RANDOM_STATE = 0
 
-file_path, emotions = WORKING_DIR + '/data/graph_metrics_mayor_que_25_all.csv', head_it_config.EMOTIONAL_LABELS
+file_path, emotions = WORKING_DIR + '/graph_metrics_mayor_igual_que_25_all.csv', head_it_config.EMOTIONAL_LABELS
 data = get_csv_content(file_path).dropna()
 
 data = data[head_it_config.CLASSIFICATION_VARS]
@@ -60,13 +60,13 @@ for label, clf in ensemble_clfs:
         # Record the OOB error for each `n_estimators=i` setting.
         oob_error = 1 - clf.oob_score_
         error_rate[label].append((i, oob_error))
-
+plt.figure(figsize=(19,9), dpi=210)
 # Generate the "OOB error rate" vs. "n_estimators" plot.
 for label, clf_err in error_rate.items():
     xs, ys = zip(*clf_err)
     plt.plot(xs, ys, label=label)
-
+# plt.rcParams["figure.figsize"] = (20,3)
 plt.xlim(min_estimators, max_estimators)
 plt.xlabel("Número de árboles de decisión")
-plt.ylabel("Error del clasificador")
+plt.ylabel("Puntuación OOB")
 plt.show()

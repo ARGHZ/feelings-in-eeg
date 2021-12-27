@@ -6,12 +6,14 @@ import json
 import config as general_config
 import head_it.config as head_it_config
 
+import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.readwrite import json_graph
 
 from data_sets_helper import read_mat_file
+from graph_analysis import get_and_construct_graph
 from matlab_analysis import filter_pdc_by_freq_band, get_pdc_dims
 
 
@@ -50,7 +52,7 @@ def draw_graph(G, full_path_file, save_file=False):
 
     pc = mpl.collections.PatchCollection(edges, cmap=cmap)
     pc.set_array(edge_colors)
-    plt.colorbar(pc)
+    # plt.colorbar(pc)
 
     ax = plt.gca()
     ax.set_axis_off()
@@ -58,7 +60,7 @@ def draw_graph(G, full_path_file, save_file=False):
     plt.show()
     # exit()
     if save_file:
-        fig_file_path = general_config.DATA_DIR + '/pdc/' + img_file_name + '.png'
+        fig_file_path = full_path_file + '.png'
         plt.savefig(fig_file_path, dpi=100)
         plt.close()
 
@@ -76,38 +78,26 @@ if __name__ == '__main__':
     general_config.extend_sys_path_with_current_dir()
 
     load_dotenv()
-    emotion_files_path = getenv('PDCS_DIRS')
-    files_path = listdir(emotion_files_path)
+    emotion_files_path = 'C:/Users/Juan/OneDrive - CINVESTAV/head_it/graphs'
+    files_path = pd.Series(listdir(emotion_files_path))
     pdc_all, pdc_significance, graph_metrics_all = [], [], []
-    for path in files_path:
-        raw_path_item = join(emotion_files_path, path)
-        file_emotion_match = raw_path_item.find('anger_') >= 0
-        file_subject_match = raw_path_item.find('subj_1_') >= 0
 
-        if True and True and isfile(raw_path_item):
-            # Getting CSV file as numpy array
-            try:
-                matlab_vars = read_mat_file(raw_path_item)
-                pdc_all.append(matlab_vars['c']['pdc'][0, 0])
-            except ValueError as e:
-                print(raw_path_item)
-                print(e)
-            else:
-                ch_labels = head_it_config.CHANNELS_PER_SUBJECT[path.split('_')[1]]
-                for freq_band in general_config.FREQ_BANDS:
-                    freq_name, freq_range = freq_band[0], freq_band[1:]
-                    img_file_name = freq_name.lower() + '/' + path
-                    graph_file_path = general_config.DATA_DIR + '/graphs/' + img_file_name
-                    filtered_freq_band_pdc = filter_pdc_by_freq_band(matlab_vars['c']['pdc_th'][0, 0], freq_name,
-                                                                     freq_range)
+    for emotion in general_config.EMOTIONAL_LABELS:
+        query = files_path.str.contains(emotion)
+        files_path_queried = files_path[query].to_numpy()
+        for path in files_path_queried:
+            json_file_path = join(emotion_files_path, path)
 
-                    N, N, m = get_pdc_dims(filtered_freq_band_pdc)
-                    DG, weighted_edges, ch_names = nx.DiGraph(), [], tuple(ch_labels.values())
-                    for i in range(N):
-                        for j in range(N):
-                            query_pdc = filtered_freq_band_pdc[i, j] > 0.0
-                            mean_value = filtered_freq_band_pdc[i, j][query_pdc].mean()
-                            if str(mean_value) != 'nan' and mean_value > 0.25:
-                                pair_nodes = (ch_names[j], ch_names[i], mean_value)
-                                weighted_edges.append(pair_nodes)
-                    DG.add_weighted_edges_from(weighted_edges)
+            if isfile(json_file_path):
+                # Getting CSV file as numpy array
+                try:
+                    G = get_and_construct_graph(json_file_path)
+                except ValueError as e:
+                    print(json_file_path)
+                    print(e)
+                else:
+                    graph_file_path = 'C:/Users/Juan/PycharmProjects/feelings-in-eeg/data/' + path
+
+                    draw_graph(G, graph_file_path, True)
+                    print(graph_file_path)
+    print('End of main process')

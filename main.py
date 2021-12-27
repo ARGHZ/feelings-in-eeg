@@ -20,7 +20,7 @@ import networkx as nx
 if __name__ == '__main__':
     load_dotenv()
     emotion_files_path = os.getenv('PDCS_DIRS')
-    files_path = listdir(emotion_files_path)
+    files_path = pd.Series(listdir(emotion_files_path))
     pdc_significance_all, pdc_significance = np.array([]), []
 
     emotion, freq_band = general_config.EMOTIONAL_LABELS[1], general_config.FREQ_BANDS[3]
@@ -29,14 +29,14 @@ if __name__ == '__main__':
             MDG = nx.MultiDiGraph()
 
             freq_name, freq_range = freq_band[0], freq_band[1:]
-            for path in files_path:
+            query = files_path.str.contains(emotion)
+            files_path_queried = files_path[query].to_numpy()
+            for path in files_path_queried:
 
                 raw_path_item = join(emotion_files_path, path)
-                file_emotion_match = raw_path_item.find(emotion + '_') >= 0
                 nth_subject = 36
-                file_subject_match = raw_path_item.find('subj_{}_'.format(str(nth_subject))) >= 0
 
-                if file_emotion_match and isfile(raw_path_item):
+                if isfile(raw_path_item):
                     # Getting CSV file as numpy array
                     try:
                         matlab_vars = read_mat_file(raw_path_item)
@@ -56,7 +56,7 @@ if __name__ == '__main__':
                             for j in range(N):
                                 query_pdc = matlab_vars['c']['pdc_th'][0, 0][i, j] > 0.0
                                 mean_value = matlab_vars['c']['pdc_th'][0, 0][i, j][query_pdc].mean()
-                                if str(mean_value) != 'nan' and mean_value > 0.25:
+                                if str(mean_value) != 'nan' and mean_value >= 0.25:
                                     pair_nodes = (ch_names[j], ch_names[i], mean_value)
                                     weighted_edges.append(pair_nodes)
                         MDG.add_weighted_edges_from(weighted_edges)

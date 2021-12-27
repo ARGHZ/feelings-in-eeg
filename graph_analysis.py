@@ -1,3 +1,5 @@
+from os import listdir
+
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -53,18 +55,13 @@ def perform_u_test_in_every_freq_band():
 
 
 if __name__ == '__main__':
-    samples = {'delta': None, 'theta': None, 'alpha': None, 'beta': None, 'gamma': None}
-    for freq_band in general_config.FREQ_BANDS:
-        freq_name, freq_range = freq_band[0].lower(), freq_band[1:]
-        print("\n=======================> Current Frequency Band {}".format(freq_name))
+    for emotion in general_config.EMOTIONAL_LABELS:
+        for freq_band in general_config.FREQ_BANDS:
+            base_files_path = 'C:/Users/Juan/OneDrive - CINVESTAV/head_it/graphs'
+            files_path = pd.Series(listdir(base_files_path))
 
-        json_file_path = general_config.DATA_DIR + '/graphs/' + freq_name + '.json'
-        G = get_and_construct_graph(json_file_path)
+            freq_name, freq_range = freq_band[0].lower(), freq_band[1:]
+            print("\n=======================> Current Frequency Band {}".format(freq_name))
 
-        # pesos = [(u, v) for u,v,e in G.edges(data=True) if e['weight'] > 0.25]
-        data = np.array([e['weight'] for u, v, e in G.edges(data=True) if e['weight'] > 0.01])
-        samples[freq_name] = data
-    statistic, p_value = stats.kruskal(samples['delta'], samples['theta'], samples['alpha'], samples['beta'])
-    if p_value <= 0.05:
-        print("Null hipothesis can be rejected (p-value: {}) \n "
-              "Which states the population median of all of the groups are equal".format(p_value))
+            json_file_path = general_config.DATA_DIR + '/graphs/' + freq_name + '.json'
+            G = get_and_construct_graph(json_file_path)

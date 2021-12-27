@@ -1,9 +1,9 @@
 import sys
 
 
-WORKING_DIR = "C:\\Users\\Juan\\PycharmProjects\\feelings-in-eeg"
+WORKING_DIR = "C:\\Users\\Juan\\OneDrive - CINVESTAV\\head_it"
 
-DATA_DIR = WORKING_DIR + '/data'
+DATA_DIR = WORKING_DIR
 
 ICA_DIR = DATA_DIR + '/ica'
 
