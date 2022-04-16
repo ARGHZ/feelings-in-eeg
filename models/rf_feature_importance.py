@@ -6,7 +6,6 @@ from sklearn.model_selection import cross_validate, KFold
 
 WORKING_DIR = "/"
 
-
 sys.path.extend(['C:\\Users\\Juan\\PycharmProjects\\feelings-in-eeg', WORKING_DIR])
 
 import numpy as np
@@ -27,7 +26,7 @@ def features_importance_cross_validate(clf, X, y):
     kf_total = KFold(n_splits=10)
     scores = cross_validate(clf, X, y, cv=kf_total.split(X), scoring=('accuracy', 'f1_micro', 'f1_weighted',
                                                                       'balanced_accuracy'), return_estimator=True,
-                                                                      n_jobs=4)
+                            n_jobs=4)
     scorings = pd.DataFrame(scores)
 
     gini_importances = []
@@ -36,6 +35,7 @@ def features_importance_cross_validate(clf, X, y):
     gini_importances = pd.DataFrame(np.array(gini_importances), columns=head_it_config.CLASSIFICATION_VARS[1:])
 
     return gini_importances.mean().to_dict()
+
 
 def features_importance_positive_vs_negative():
     features_importances = []
@@ -71,8 +71,8 @@ def features_importance_plot(importances, x_labels=None, use_seaborn=True):
         plt.bar(importances.keys(), importances.values())
         # plt.xticks(rotation=21, horizontalalignment='right')
         # plt.title('Comparison of different Feature Importances')
-    plt.xlabel('Características $c$',  fontsize=17)
-    plt.ylabel('$IMP_{Gini}$',  fontsize=17)
+    plt.xlabel('Características $c$', fontsize=17)
+    plt.ylabel('$IMP_{Gini}$', fontsize=17)
     plt.show()
 
 
@@ -104,12 +104,13 @@ def features_importances_subplots(data, x_labels=None):
 
 if __name__ == '__main__':
     # opposite_pair_emotions = combinations(head_it_config.EMOTIONAL_LABELS, 2)
-    
+
     emotion_1, emotion_2 = 'relief', 'grief'
-    
-    emotions_query = 'emotion_a == "' + emotion_1 + '" & emotion_b == "' + emotion_2  + '"'
+
+    emotions_query = 'emotion_a == "' + emotion_1 + '" & emotion_b == "' + emotion_2 + '"'
     file_path, emotions = WORKING_DIR + '/feature_importances_pairs_emotions_freq_band.csv', head_it_config.EMOTIONAL_LABELS
-    features_importances = pd.read_csv(file_path, index_col=None).dropna().query(emotions_query).reset_index().drop(columns=['emotion_a', 'emotion_b', 'index'])
+    features_importances = pd.read_csv(file_path, index_col=None).dropna().query(emotions_query).reset_index().drop(
+        columns=['emotion_a', 'emotion_b', 'index'])
     print(features_importances)
 
     features_importances_subplots(features_importances)
