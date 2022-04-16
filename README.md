@@ -1,1 +1,1 @@
-# thought-cmd
+# Feelings in EEG
